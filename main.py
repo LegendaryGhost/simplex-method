@@ -46,15 +46,13 @@ def find_pivot(matrix: list[list[Fraction]], find_max: bool) -> tuple[int, int]:
     if not contains_positive(pivot_column):
         return -1, -1
 
-    pivot_element = 1
+    pivot_x = -1
     pivot_ratio = inf
     for i in range(len(pivot_column)):
-        if pivot_column[i] >= 0:
+        if pivot_column[i] > 0:
             if last_column[i] / pivot_column[i] < pivot_ratio:
-                pivot_element = pivot_column[i]
+                pivot_x = i
                 pivot_ratio = last_column[i] / pivot_column[i]
-
-    pivot_x = pivot_column.index(pivot_element)
 
     return pivot_x, pivot_y
 
@@ -103,6 +101,7 @@ def two_phase_simplex(matrix: list[list[Fraction]], objective: dict[str, Fractio
     print_simplex_table(matrix, variables, base_variables)
     for base in base_variables:
         pivot(matrix, base_variables.index(base), variables.index(base))
+    print_simplex_table(matrix, variables, base_variables)
 
     print("Phase 1: Min {}".format(" + ".join(artificial_variables)))
     minimize(matrix, variables, base_variables)
@@ -115,7 +114,7 @@ def two_phase_simplex(matrix: list[list[Fraction]], objective: dict[str, Fractio
         for row in matrix:
             del row[index]
 
-    new_last_row = [0 for i in range(len(variables) + 1)]
+    new_last_row = [Fraction(0) for _ in range(len(variables) + 1)]
     obj_str = []
     for variable in objective.keys():
         variable_index = variables.index(variable)
@@ -138,6 +137,7 @@ def two_phase_simplex(matrix: list[list[Fraction]], objective: dict[str, Fractio
         minimize(matrix, variables, base_variables)
 
 
+# Test subject 1
 # matrix1 = [
 #     [Fraction(6), Fraction(10), Fraction(-1), Fraction(0), Fraction(0), Fraction(1), Fraction(0), Fraction(60)],
 #     [Fraction(8), Fraction(25), Fraction(0), Fraction(-1), Fraction(0), Fraction(0), Fraction(1), Fraction(200)],
@@ -153,18 +153,55 @@ def two_phase_simplex(matrix: list[list[Fraction]], objective: dict[str, Fractio
 # base_variables1 = ["a1", "a2", "E3"]
 # artificial_variables1 = ["a1", "a2"]
 
+
+# Test subject 2
+# matrix1 = [
+#     [Fraction(2), Fraction(-1), Fraction(-1), Fraction(0), Fraction(1), Fraction(15)],
+#     [Fraction(1), Fraction(1), Fraction(0), Fraction(0), Fraction(0), Fraction(10)],
+#     [Fraction(2), Fraction(-1), Fraction(0), Fraction(1), Fraction(0), Fraction(20)],
+#     [Fraction(0), Fraction(0), Fraction(0), Fraction(0), Fraction(1), Fraction(0)]
+# ]
+# objective1 = {
+#     "x1": Fraction(4),
+#     "x2": Fraction(3)
+# }
+# variables1 = ["x1", "x2", "E1", "E2", "a1"]
+# base_variables1 = ["a1", "x2", "E2"]
+# artificial_variables1 = ["a1"]
+
+
+# Test subject 3
+# matrix1 = [
+#     [Fraction(1), Fraction(0), Fraction(1), Fraction(0), Fraction(0), Fraction(3000)],
+#     [Fraction(0), Fraction(1), Fraction(0), Fraction(1), Fraction(0), Fraction(4000)],
+#     [Fraction(1), Fraction(1), Fraction(0), Fraction(0), Fraction(1), Fraction(5000)],
+#     [Fraction(0), Fraction(0), Fraction(0), Fraction(0), Fraction(0), Fraction(0)]
+#     # [Fraction(6, 5), Fraction(17, 10), Fraction(0), Fraction(0), Fraction(0), Fraction(0)]
+# ]
+# objective1 = {
+#     "xp": Fraction(6, 5),
+#     "xc": Fraction(17, 10)
+# }
+# variables1 = ["xp", "xc", "E1", "E2", "E3"]
+# base_variables1 = ["E1", "E2", "E3"]
+# artificial_variables1 = []
+
+
+# Test subject 4
 matrix1 = [
-    [Fraction(2), Fraction(-1), Fraction(-1), Fraction(0), Fraction(1), Fraction(15)],
-    [Fraction(1), Fraction(1), Fraction(0), Fraction(0), Fraction(0), Fraction(10)],
-    [Fraction(2), Fraction(-1), Fraction(0), Fraction(1), Fraction(0), Fraction(20)],
-    [Fraction(0), Fraction(0), Fraction(0), Fraction(0), Fraction(1), Fraction(0)]
+    [Fraction(2), Fraction(4), Fraction(1), Fraction(0), Fraction(16)],
+    [Fraction(3), Fraction(2), Fraction(0), Fraction(1), Fraction(12)],
+    [Fraction(0), Fraction(0), Fraction(0), Fraction(0), Fraction(0)]
+    # [Fraction(6, 5), Fraction(17, 10), Fraction(0), Fraction(0), Fraction(0), Fraction(0)]
 ]
 objective1 = {
-    "x1": Fraction(4),
-    "x2": Fraction(3)
+    "x1": Fraction(7),
+    "x2": Fraction(6)
 }
-variables1 = ["x1", "x2", "E1", "E2", "a1"]
-base_variables1 = ["a1", "x2", "E2"]
-artificial_variables1 = ["a1"]
+variables1 = ["x1", "x2", "E1", "E2"]
+base_variables1 = ["E1", "E2"]
+artificial_variables1 = []
 
 two_phase_simplex(matrix1, objective1, variables1, base_variables1, artificial_variables1)
+# print_simplex_table(matrix1, variables1, base_variables1)
+# maximize(matrix1, variables1, base_variables1)
